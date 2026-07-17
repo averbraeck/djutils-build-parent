@@ -1,0 +1,401 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.djutils</groupId>
+  <artifactId>djutils-build-parent</artifactId>
+  <version>0.1</version>
+  <packaging>pom</packaging>
+
+  <name>Generic Maven build parent pom with default conventions</name>
+  <description>Generic Maven build parent pom with default conventions</description>
+  
+  <url>https://djutils.org</url>
+
+  <organization>
+    <name>Delft University of Technology</name>
+    <url>https://www.tudelft.nl</url>
+  </organization>
+
+  <properties>
+    <jdk.version>17</jdk.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>${jdk.version}</maven.compiler.source>
+    <maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+    <junit.version>5.14.4</junit.version>
+    <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
+
+    <maven.compiler.version>3.15.0</maven.compiler.version>
+    <maven.install.version>3.1.4</maven.install.version>
+    <maven.source.version>3.3.1</maven.source.version>
+    <maven.javadoc.version>3.11.2</maven.javadoc.version>
+    <maven.resources.version>3.3.1</maven.resources.version>
+    <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
+    <checkstyle.version>13.5.0</checkstyle.version>
+    <maven.surefire.version>3.5.6</maven.surefire.version>
+    <maven.failsafe.version>3.5.6</maven.failsafe.version>
+    <maven.jacoco.version>0.8.14</maven.jacoco.version>
+    <maven.spotbugs.version>4.9.8.3</maven.spotbugs.version>
+    <spotbugs.version>4.9.8</spotbugs.version>
+    <maven.pmd.version>3.28.0</maven.pmd.version>
+    <flatten.maven.version>1.7.3</flatten.maven.version>
+    <maven.deploy.version>3.1.4</maven.deploy.version>
+    <central-maven.version>0.8.0</central-maven.version>
+    <maven.gpg.version>3.2.7</maven.gpg.version>
+    <spotless.maven.version>3.0.0</spotless.maven.version>
+  </properties>
+
+  <build>
+  
+    <!-- 
+      PluginManagement manages the initial configuration of the plugins.
+      The plugins themselves still need to be 'activated' in the build section of the actual pom.
+      Some plugins are started by default in the plugins section below.
+    -->
+    
+    <pluginManagement>
+      <plugins>
+      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven.compiler.version}</version>
+          <configuration>
+            <release>${jdk.version}</release>
+          </configuration>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven.resources.version}</version>
+          <executions>
+            <execution>
+              <id>default-resources</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${basedir}/src/main/resources</directory>
+                  </resource>
+                </resources>
+                <outputDirectory>${basedir}/target/classes</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>default-testResources</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${basedir}/src/test/resources</directory>
+                  </resource>
+                </resources>
+                <outputDirectory>${basedir}/target/test-classes</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>testResources main</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${basedir}/src/main/resources</directory>
+                  </resource>
+                </resources>
+                <outputDirectory>${basedir}/target/test-classes</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven.install.version}</version>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven.source.version}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven.javadoc.version}</version>
+          <configuration>
+            <minmemory>256m</minmemory>
+            <maxmemory>1g</maxmemory>
+            <detectJavaApiLink>true</detectJavaApiLink>
+            <detectOfflineLinks>true</detectOfflineLinks>
+            <detectLinks>true</detectLinks>
+            <release>${jdk.version}</release>
+          </configuration>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${maven.checkstyle.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven.surefire.version}</version>
+          <configuration>
+            <!-- Sets the VM argument line used when unit tests are run. -->
+            <argLine>${surefireArgLine}</argLine>
+            <!-- Skips unit tests if the value of skip.unit.tests property is true -->
+            <skipTests>${skip.unit.tests}</skipTests>
+            <!-- Excludes integration tests when unit tests are run. -->
+            <excludes>
+              <exclude>**/IT*.java</exclude>
+            </excludes>
+            <!-- Make sure every unit test is run as a separate process to avoid static leaks between tests -->
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+          </configuration>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.failsafe.version}</version>
+          <executions>
+            <!-- Ensures that both integration-test and verify goals of the Failsafe Maven plugin are executed. -->
+            <execution>
+              <id>integration-tests</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the VM argument line used when integration tests are run. -->
+                <argLine>${failsafeArgLine}</argLine>
+                <!-- Skips integration tests if the value of skip.integration.tests property is true -->
+                <skipTests>${skip.integration.tests}</skipTests>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${maven.jacoco.version}</version>
+          <executions>
+  
+            <!-- Prepares the property pointing to the JaCoCo runtime agent which is passed as VM argument when Maven the Surefire 
+              plugin is executed. -->
+            <execution>
+              <id>pre-unit-test</id>
+              <!-- phase>pre-integration-test</phase -->
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file which contains the execution data. -->
+                <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
+                <propertyName>surefireArgLine</propertyName>
+              </configuration>
+            </execution>
+  
+            <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run. -->
+            <execution>
+              <id>post-unit-test</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <!-- Sets the path to the file which contains the execution data. -->
+                <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                <!-- Sets the output directory for the code coverage report. -->
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+              </configuration>
+            </execution>
+  
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten.maven.version}</version>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+            <flattenMode>oss</flattenMode>
+            <pomElements>
+              <distributionManagement>remove</distributionManagement>
+              <repositories>remove</repositories>
+            </pomElements>
+          </configuration>
+          <executions>
+            <!-- enable flattening -->
+            <execution>
+              <id>flatten</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+            </execution>
+            <!-- ensure proper cleanup -->
+            <execution>
+              <id>flatten.clean</id>
+              <phase>clean</phase>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+  
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${maven.spotbugs.version}</version>
+          <configuration>
+              <excludeFilterFile>${project.basedir}/config/spotbugs-exclude.xml</excludeFilterFile>
+              <includeTests>false</includeTests>
+          </configuration>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${maven.pmd.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.maven.version}</version>
+
+          <configuration>
+            <java>
+              <eclipse>
+                <file>${maven.multiModuleProjectDirectory}/config/eclipse-java-formatter.xml</file>
+              </eclipse>
+              <removeUnusedImports />
+            </java>
+          </configuration>
+
+          <executions>
+            <execution>
+              <id>spotless-check</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
+      
+    <!-- 
+      The plugins section manages the actual availability of plugins that need to be available always.
+      The behavior may be overridden in the build section of the actual pom.
+    -->
+
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+  
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      
+    </plugins>
+  </build>
+
+</project>
