@@ -43,6 +43,9 @@
     <central-maven.version>0.8.0</central-maven.version>
     <maven.gpg.version>3.2.7</maven.gpg.version>
     <spotless.maven.version>3.0.0</spotless.maven.version>
+    <maven.dependency.version>3.9.0</maven.dependency.version>
+    
+    <build.config.version>0.1</build.config.version>
   </properties>
 
   <build>
@@ -310,7 +313,7 @@
           <configuration>
             <java>
               <eclipse>
-                <file>${maven.multiModuleProjectDirectory}/config/eclipse-java-formatter.xml</file>
+                <file>${maven.multiModuleProjectDirectory}/build-config/eclipse-java-formatter.xml</file>
               </eclipse>
               <removeUnusedImports />
             </java>
@@ -326,6 +329,34 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven.dependency.version}</version>
+          <executions>
+            <execution>
+              <id>unpack-build-config</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>org.djutils</groupId>
+                    <artifactId>build-config</artifactId>
+                    <version>${build.config.version}</version>
+                    <outputDirectory>
+                      ${project.build.directory}/build-config
+                    </outputDirectory>
+                  </artifactItem>
+                </artifactItems>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
     
@@ -393,6 +424,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
       
     </plugins>
