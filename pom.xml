@@ -326,7 +326,7 @@
                 <artifactItems>
                   <artifactItem>
                     <groupId>org.djutils</groupId>
-                    <artifactId>build-config</artifactId>
+                    <artifactId>djutils-build-config</artifactId>
                     <version>${build.config.version}</version>
                     <outputDirectory>
                       ${maven.multiModuleProjectDirectory}/.build-config
