@@ -33,7 +33,6 @@
     <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
     <checkstyle.version>13.5.0</checkstyle.version>
     <maven.surefire.version>3.5.6</maven.surefire.version>
-    <maven.failsafe.version>3.5.6</maven.failsafe.version>
     <maven.jacoco.version>0.8.14</maven.jacoco.version>
     <maven.spotbugs.version>4.9.8.3</maven.spotbugs.version>
     <spotbugs.version>4.9.8</spotbugs.version>
@@ -174,6 +173,14 @@
               <version>${checkstyle.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <configLocation>
+              ${maven.multiModuleProjectDirectory}/.build-config/checkstyle.xml
+            </configLocation>
+            <suppressionsLocation>
+              ${maven.multiModuleProjectDirectory}/.build-config/suppressions.xml
+            </suppressionsLocation>
+          </configuration>
         </plugin>
         
         <plugin>
@@ -185,10 +192,6 @@
             <argLine>${surefireArgLine}</argLine>
             <!-- Skips unit tests if the value of skip.unit.tests property is true -->
             <skipTests>${skip.unit.tests}</skipTests>
-            <!-- Excludes integration tests when unit tests are run. -->
-            <excludes>
-              <exclude>**/IT*.java</exclude>
-            </excludes>
             <!-- Make sure every unit test is run as a separate process to avoid static leaks between tests -->
             <forkCount>1</forkCount>
             <reuseForks>false</reuseForks>
@@ -196,33 +199,11 @@
         </plugin>
   
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven.failsafe.version}</version>
-          <executions>
-            <!-- Ensures that both integration-test and verify goals of the Failsafe Maven plugin are executed. -->
-            <execution>
-              <id>integration-tests</id>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-              <configuration>
-                <!-- Sets the VM argument line used when integration tests are run. -->
-                <argLine>${failsafeArgLine}</argLine>
-                <!-- Skips integration tests if the value of skip.integration.tests property is true -->
-                <skipTests>${skip.integration.tests}</skipTests>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-  
-        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${maven.jacoco.version}</version>
           <executions>
-  
+
             <!-- Prepares the property pointing to the JaCoCo runtime agent which is passed as VM argument when Maven the Surefire 
               plugin is executed. -->
             <execution>
@@ -238,7 +219,7 @@
                 <propertyName>surefireArgLine</propertyName>
               </configuration>
             </execution>
-  
+
             <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run. -->
             <execution>
               <id>post-unit-test</id>
@@ -294,7 +275,7 @@
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>${maven.spotbugs.version}</version>
           <configuration>
-              <excludeFilterFile>${project.basedir}/config/spotbugs-exclude.xml</excludeFilterFile>
+              <excludeFilterFile>${maven.multiModuleProjectDirectory}/.build-config/spotbugs-exclude.xml</excludeFilterFile>
               <includeTests>false</includeTests>
           </configuration>
         </plugin>
@@ -313,7 +294,7 @@
           <configuration>
             <java>
               <eclipse>
-                <file>${maven.multiModuleProjectDirectory}/build-config/eclipse-java-formatter.xml</file>
+                <file>${maven.multiModuleProjectDirectory}/.build-config/eclipse-java-formatter.xml</file>
               </eclipse>
               <removeUnusedImports />
             </java>
@@ -348,7 +329,7 @@
                     <artifactId>build-config</artifactId>
                     <version>${build.config.version}</version>
                     <outputDirectory>
-                      ${project.build.directory}/build-config
+                      ${maven.multiModuleProjectDirectory}/.build-config
                     </outputDirectory>
                   </artifactItem>
                 </artifactItems>
@@ -399,16 +380,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
 
       <plugin>
