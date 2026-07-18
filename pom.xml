@@ -175,10 +175,10 @@
           </dependencies>
           <configuration>
             <configLocation>
-               ${session.executionRootDirectory}/.build-config/checkstyle.xml
+               ${project.basedir}/.build-config/checkstyle.xml
             </configLocation>
             <suppressionsLocation>
-               ${session.executionRootDirectory}/.build-config/suppressions.xml
+               ${project.basedir}/.build-config/suppressions.xml
             </suppressionsLocation>
           </configuration>
         </plugin>
@@ -275,7 +275,7 @@
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>${maven.spotbugs.version}</version>
           <configuration>
-              <excludeFilterFile> ${session.executionRootDirectory}/.build-config/spotbugs-exclude.xml</excludeFilterFile>
+              <excludeFilterFile> ${project.basedir}/.build-config/spotbugs-exclude.xml</excludeFilterFile>
               <includeTests>false</includeTests>
           </configuration>
         </plugin>
@@ -294,7 +294,7 @@
           <configuration>
             <java>
               <eclipse>
-                <file> ${session.executionRootDirectory}/.build-config/eclipse-java-formatter.xml</file>
+                <file> ${project.basedir}/.build-config/eclipse-java-formatter.xml</file>
               </eclipse>
               <removeUnusedImports />
             </java>
@@ -329,7 +329,7 @@
                     <artifactId>djutils-build-config</artifactId>
                     <version>${build.config.version}</version>
                     <outputDirectory>
-                      ${session.executionRootDirectory}/.build-config
+                      ${project.basedir}/.build-config
                     </outputDirectory>
                   </artifactItem>
                 </artifactItems>
